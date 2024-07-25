@@ -23,7 +23,11 @@ namespace DivineMatchInfo
 
         public Plugin()
         {
-            enableSwitcher = MenuFactory.CreateSwitcher("Enable Divine Match Info Plugin", false).OnValueChange += OnEnableSwitcherValueChange;
+            var mainMenu = MenuFactory.Create("Утилита", "Divine Match Info");
+            enableSwitcher = mainMenu.CreateSwitcher("Enable Divine Match Info Plugin", false)
+                .SetTooltip("Toggle the Divine Match Info plugin")
+                .OnValueChange += OnEnableSwitcherValueChange;
+            mainMenu.Attach();
         }
 
         public void OnLoad()
