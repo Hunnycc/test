@@ -5,7 +5,6 @@ using DivineSharp.Plugin.Sdk;
 using DivineSharp.Plugin.Sdk.Common.Events;
 using DivineSharp.Plugin.Sdk.Common.Models;
 using DivineSharp.Plugin.Sdk.UI;
-using DivineSharp.Plugin.Sdk.UI.Menu;
 using DivineSharp.Plugin.Sdk.UI.Menu.Items;
 using System.Net.Http;
 using System.Text;
@@ -23,9 +22,9 @@ namespace DivineMatchInfo
 
         public Plugin()
         {
-            var mainMenu = MenuFactory.Create("Плагины", "Divine Match Info");
-            enableSwitcher = mainMenu.CreateSwitcher("Включить плагин Divine Match Info", false)
-                .SetTooltip("Переключить плагин Divine Match Info")
+            var mainMenu = MenuFactory.Create("Plugins", "Divine Match Info");
+            enableSwitcher = mainMenu.CreateSwitcher("Enable Divine Match Info Plugin", false)
+                .SetTooltip("Toggle Divine Match Info Plugin")
                 .OnValueChange += OnEnableSwitcherValueChange;
             mainMenu.Attach();
         }
@@ -89,10 +88,17 @@ namespace DivineMatchInfo
 
         private async Task SendMatchInfoAsync(object data)
         {
-            var jsonData = JsonSerializer.Serialize(data);
-            var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("http://localhost:6001/matchinfo", content);
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                var jsonData = JsonSerializer.Serialize(data);
+                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                var response = await client.PostAsync("http://localhost:6001/matchinfo", content);
+                response.EnsureSuccessStatusCode();
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine($"Request error: {e.Message}");
+            }
         }
     }
 }
