@@ -13,9 +13,9 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Linq;
 
-namespace DivineMatchInfo
+namespace EMT.Farm
 {
-    [Plugin("Divine Match Info", "YourName", "1.0")]
+    [Plugin("EMT Farm", "YourName", "1.0")]
     public class Plugin : IPlugin
     {
         private static readonly HttpClient client = new HttpClient();
@@ -24,9 +24,9 @@ namespace DivineMatchInfo
 
         public Plugin()
         {
-            var mainMenu = MenuFactory.Create("Plugins", "Divine Match Info");
-            enableSwitcher = mainMenu.CreateSwitcher("Enable Divine Match Info Plugin", false)
-                .SetTooltip("Toggle Divine Match Info Plugin")
+            var mainMenu = MenuFactory.Create("Plugins", "EMT Farm");
+            enableSwitcher = mainMenu.CreateSwitcher("Enable EMT Farm Plugin", false)
+                .SetTooltip("Toggle EMT Farm Plugin")
                 .OnValueChange += OnEnableSwitcherValueChange;
             updateButton = mainMenu.CreateButton("Update Now", "Send match info immediately")
                 .OnClick += OnUpdateButtonClick;
@@ -35,13 +35,13 @@ namespace DivineMatchInfo
 
         public void OnLoad()
         {
-            Console.WriteLine("Divine Match Info Plugin loaded!");
+            Console.WriteLine("EMT Farm Plugin loaded!");
         }
 
         public void OnUnload()
         {
             Game.OnUpdate -= OnUpdate;
-            Console.WriteLine("Divine Match Info Plugin unloaded!");
+            Console.WriteLine("EMT Farm Plugin unloaded!");
         }
 
         private void OnEnableSwitcherValueChange(object sender, SwitcherEventArgs e)
