@@ -5,6 +5,7 @@ using DivineSharp.Plugin.Sdk;
 using DivineSharp.Plugin.Sdk.Common.Events;
 using DivineSharp.Plugin.Sdk.Common.Models;
 using DivineSharp.Plugin.Sdk.UI;
+using DivineSharp.Plugin.Sdk.UI.Menu;
 using DivineSharp.Plugin.Sdk.UI.Menu.Items;
 using System.Net.Http;
 using System.Text;
@@ -19,6 +20,7 @@ namespace DivineMatchInfo
     {
         private static readonly HttpClient client = new HttpClient();
         private readonly MenuSwitcher enableSwitcher;
+        private readonly MenuButton updateButton;
 
         public Plugin()
         {
@@ -26,6 +28,8 @@ namespace DivineMatchInfo
             enableSwitcher = mainMenu.CreateSwitcher("Enable Divine Match Info Plugin", false)
                 .SetTooltip("Toggle Divine Match Info Plugin")
                 .OnValueChange += OnEnableSwitcherValueChange;
+            updateButton = mainMenu.CreateButton("Update Now", "Send match info immediately")
+                .OnClick += OnUpdateButtonClick;
             mainMenu.Attach();
         }
 
@@ -86,6 +90,11 @@ namespace DivineMatchInfo
             await SendMatchInfoAsync(matchInfo);
         }
 
+        private async void OnUpdateButtonClick(object sender, EventArgs e)
+        {
+            await OnUpdate();
+        }
+
         private async Task SendMatchInfoAsync(object data)
         {
             try
@@ -95,9 +104,9 @@ namespace DivineMatchInfo
                 var response = await client.PostAsync("http://localhost:6001/matchinfo", content);
                 response.EnsureSuccessStatusCode();
             }
-            catch (HttpRequestException e)
+            catch (HttpRequestException ex)
             {
-                Console.WriteLine($"Request error: {e.Message}");
+                Console.WriteLine($"Request error: {ex.Message}");
             }
         }
     }
