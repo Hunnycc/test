@@ -49,21 +49,43 @@ namespace GSIPostPlugin
 
         private async void OnUpdate()
         {
-            var gsiData = GetGSIData();
-            if (gsiData != null)
+            var match = Context.Game?.Match;
+            if (match == null) return;
+
+            var gsiData = new
             {
-                await SendGSIDataAsync(gsiData);
-            }
+                match.Id,
+                match.GameTime,
+                match.State,
+                Heroes = match.Heroes.Select(hero => new
+                {
+                    hero.Id,
+                    hero.Name,
+                    hero.Level,
+                    hero.Health,
+                    hero.MaxHealth,
+                    hero.Mana,
+                    hero.MaxMana,
+                    hero.IsAlive,
+                    hero.IsStunned,
+                    hero.IsSilenced,
+                    hero.IsDisarmed,
+                    hero.IsMagicImmune,
+                    hero.IsHexed,
+                    hero.IsMuted,
+                    hero.HasDebuff,
+                    hero.Position.X,
+                    hero.Position.Y,
+                    hero.Position.Z
+                })
+            };
+
+            await SendGSIDataAsync(gsiData);
         }
 
-        private string GetGSIData()
+        private async Task SendGSIDataAsync(object data)
         {
-            // Пример получения данных (замените на реальный код для получения данных)
-            return "{ \"example_key\": \"example_value\" }";
-        }
-
-        private async Task SendGSIDataAsync(string jsonData)
-        {
+            var jsonData = JsonSerializer.Serialize(data);
             var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
             var response = await client.PostAsync("http://localhost:5001/gsi", content);
             response.EnsureSuccessStatusCode();
